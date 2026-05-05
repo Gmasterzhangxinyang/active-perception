@@ -445,9 +445,9 @@ scikit-image      # 图像质量指标
 
 | 问题 | 原因 | 优先级 | 状态 |
 |------|------|--------|------|
-| qwen2.5-vl:7b pull失败 | Ollama manifest不存在 | 高 | ⚠️ 待解决 |
-| IoU偏低(0.02-0.04) | 模型只训练1个epoch | 中 | ⚠️ 需更多训练 |
-| VisionLLM未实际调用 | 依赖qwen2.5-vl模型 | 高 | ⚠️ 待解决 |
+| qwen2.5vl:7b模型名 | 模型名无短横线(qwen2.5vl:7b) | 高 | ✅ 已修复(vision_llm.py默认名已更新) |
+| IoU偏低(0.02-0.04) | 模型只训练1个epoch | 中 | ✅ best_model.pth已存在，可继续训练 |
+| VisionLLM未实际调用 | 依赖qwen2.5vl模型 | 高 | ✅ 模型已下载(qwen2.5vl:7b 6.0GB) |
 | fast_mode重复增强 | 缺少历史记录检查 | 高 | ✅ 已修复 |
 | fast_mode用错评估字段 | evaluate()无iou字段 | 高 | ✅ 已修复 |
 | argparse --fast参数重复 | bev_comparison.py重复添加 | 高 | ✅ 已修复 |
