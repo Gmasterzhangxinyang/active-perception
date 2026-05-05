@@ -69,9 +69,9 @@ AVAILABLE_TOOLS = [
                 },
                 "method": {
                     "type": "string",
-                    "enum": ["SCiM", "OpenCV"],
+                    "enum": ["CLAHE", "Gaussian"],
                     "description": "去雨方法",
-                    "default": "SCiM"
+                    "default": "CLAHE"
                 }
             },
             "required": ["camera_ids"]

@@ -102,22 +102,13 @@ class VisionLLM:
                 content = result.get("message", {}).get("content", "")
 
                 # 尝试解析JSON
-                try:
-                    # 直接解析
-                    parsed = json.loads(content)
-                    # 添加相机信息
+                # 尝试提取并解析JSON
+                parsed = self._extract_json(content)
+                if parsed is not None:
                     parsed["camera_id"] = camera_id
                     parsed["camera_name"] = self.camera_names.get(camera_id, f"Camera{camera_id}")
+                    parsed.setdefault("analysis", content[:100])
                     return parsed
-                except json.JSONDecodeError:
-                    # 尝试提取JSON部分
-                    import re
-                    json_match = re.search(r'\{[^}]+\}', content, re.DOTALL)
-                    if json_match:
-                        parsed = json.loads(json_match.group())
-                        parsed["camera_id"] = camera_id
-                        parsed["camera_name"] = self.camera_names.get(camera_id, f"Camera{camera_id}")
-                        return parsed
 
                 # 如果解析失败，返回默认
                 return self._default_result(camera_id, "分析失败")
@@ -151,6 +142,31 @@ class VisionLLM:
             results.append(result)
 
         return results
+
+    def _extract_json(self, text):
+        """从文本中提取JSON，支持嵌套结构"""
+        import re
+        # 先尝试直接解析
+        try:
+            return json.loads(text)
+        except json.JSONDecodeError:
+            pass
+        # 找到最外层的{}
+        start = text.find('{')
+        if start == -1:
+            return None
+        depth = 0
+        for i, ch in enumerate(text[start:], start):
+            if ch == '{':
+                depth += 1
+            elif ch == '}':
+                depth -= 1
+                if depth == 0:
+                    try:
+                        return json.loads(text[start:i+1])
+                    except json.JSONDecodeError:
+                        return None
+        return None
 
     def _default_result(self, camera_id, error_msg=""):
         """默认结果"""
