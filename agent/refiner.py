@@ -256,7 +256,9 @@ class ImageRefiner:
             resized_np = resized_np.astype(np.float32) / 255.0
             resized_tensor = torch.from_numpy(resized_np).permute(0, 3, 1, 2)
 
-            # 放入原图位置（可能超出范围，这里简化处理）
-            images[:, cam_id, :, :new_H, :new_W] = resized_tensor.to(images.device)
+            # 裁剪到原图尺寸后放回
+            out_H = min(new_H, H)
+            out_W = min(new_W, W)
+            images[:, cam_id, :, :out_H, :out_W] = resized_tensor[:, :, :out_H, :out_W].to(images.device)
 
         return images

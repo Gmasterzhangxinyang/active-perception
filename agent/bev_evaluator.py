@@ -48,7 +48,7 @@ class BEVEvaluator:
             "class_counts": class_counts,
             "integrity": integrity,
             "score": score,
-            "needs_optimization": edge_density > 10.0 or integrity < 0.5 or len(problem_coords) > 3,
+            "needs_optimization": edge_density < 0.05 or integrity < 0.5 or len(problem_coords) > 3,
             "problem_mask": self._find_problem_regions(bev_seg),
             "problem_coords": problem_coords
         }
@@ -214,7 +214,7 @@ class BEVEvaluator:
         """计算边缘密度"""
         bev_np = bev.cpu().numpy().astype(np.uint8)
         edges = cv2.Canny(bev_np * 255, 50, 150)
-        edge_density = edges.sum() / (edges.size + 1e-6)
+        edge_density = (edges > 0).sum() / (edges.size + 1e-6)
         return edge_density
 
     def _count_classes(self, bev):
